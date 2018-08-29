@@ -278,10 +278,15 @@ void setCurrentThreadToRealtime(bool throw_on_error) {
 }
 
 bool hasRealtimeKernel() {
-  std::ifstream realtime("/sys/kernel/realtime", std::ios_base::in);
-  bool is_realtime;
-  realtime >> is_realtime;
-  return is_realtime;
+    bool is_realtime;
+    #ifdef __linux
+        std::ifstream realtime("/sys/kernel/realtime", std::ios_base::in);
+        realtime >> is_realtime;
+    #elif __APPLE__
+        realtime = true;
+     #endif
+    
+    return is_realtime;
 }
 
 template class ControlLoop<JointPositions>;
