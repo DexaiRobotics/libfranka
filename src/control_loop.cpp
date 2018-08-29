@@ -283,7 +283,7 @@ bool hasRealtimeKernel() {
         std::ifstream realtime("/sys/kernel/realtime", std::ios_base::in);
         realtime >> is_realtime;
     #elif __APPLE__
-        realtime = true;
+        is_realtime = true;
      #endif
     
     return is_realtime;
