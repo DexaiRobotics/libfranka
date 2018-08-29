@@ -25,10 +25,15 @@ Network::Network(const std::string& franka_address,
     tcp_socket_.setReceiveTimeout(poco_timeout);
 
     if (std::get<0>(tcp_keepalive)) {
-      tcp_socket_.setKeepAlive(true);
-      tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPIDLE, std::get<1>(tcp_keepalive));
-      tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPCNT, std::get<2>(tcp_keepalive));
-      tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPINTVL, std::get<3>(tcp_keepalive));
+      #ifdef __linux
+        tcp_socket_.setKeepAlive(true);
+        tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPIDLE, std::get<1>(tcp_keepalive));
+        tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPCNT, std::get<2>(tcp_keepalive));
+        tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPINTVL, std::get<3>(tcp_keepalive));
+      #elif __APPLE__
+        tcp_socket_.setKeepAlive(true);
+        tcp_socket_.setOption(IPPROTO_TCP, TCP_KEEPALIVE, std::get<3>(tcp_keepalive));
+      #endif
     }
 
     udp_socket_.bind({"0.0.0.0", 0});
